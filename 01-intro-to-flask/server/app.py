@@ -1,6 +1,6 @@
 from flask import Flask, make_response, jsonify, request
 from flask_migrate import Migrate
-from models import db, Pet, Owner
+from models import db, Pet, Owner, User
 
 # 3. ✅ Initialize the App
 app = Flask(__name__)  # initializa flask in a name. must be app. name space you are running code in. call this flask contructor we have app
@@ -25,6 +25,18 @@ def root(): #name of function doesnt matter , view function
     print('hello world') # will print in the server log, client cannot see
     return make_response(jsonify({}), 200) # needs 2 things, data(json) to client and status code, data mainly json data back to the client, {} stands for json data
     #send a response object back
+
+
+
+@app.route('/signup', methods =['POST'])
+def signup():
+    data = request.get_json()
+    new_user = User(username=data['username'])
+    new_user.password_hash = data['password']
+    db.session.add(new_user)
+    db.session.commit()
+
+    return {'message': 'user added'}, 201
 
 
 @app.route('/pets', methods = ['GET', 'POST'])
